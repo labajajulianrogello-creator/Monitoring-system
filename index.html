@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bakery POS</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo brand-font" style="font-size:19px;font-weight:700;">B</div>
+    <nav>
+      <button class="nav-btn active" title="Home" data-view="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      </button>
+      <button class="nav-btn" title="Dashboard" data-view="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+      </button>
+      <button class="nav-btn" title="Inventory" data-view="inventory">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+      </button>
+      <button class="nav-btn" title="Reports" data-view="reports">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg>
+      </button>
+      <button class="nav-btn" title="History" data-view="history">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/><path d="M3.5 9a9 9 0 0 1 1.7-3.4"/></svg>
+      </button>
+    </nav>
+    <button class="settings-btn nav-btn" title="Settings" data-view="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 0 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 0 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 0 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg>
+    </button>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-search-area" id="topbarSearchArea">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input id="searchInput" type="text" placeholder="Search category or item">
+        </div>
+        <button class="filter-btn" id="clearFilterBtn">Clear filter</button>
+      </div>
+      <h1 class="topbar-view-title brand-font" id="topbarViewTitle" style="display:none;"></h1>
+      <div class="topbar-right">
+        <div class="avatar">🧑‍🍳</div>
+        <div class="welcome-text">
+          <div class="who">Welcome, Chef!</div>
+          <div class="role">Cashier · The Corner Bakery</div>
+        </div>
+        <button class="bell-btn" id="cartToggleBtn" title="View order">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content">
+      <nav class="categories" id="categories"></nav>
+      <div class="product-grid" id="productGrid"></div>
+
+      <div class="dashboard-view" id="dashboardView">
+        <div class="dash-stats-row">
+          <div class="dash-stat-card">
+            <div class="dash-stat-top">
+              <span class="dash-stat-icon icon-amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l1 5H5l1-5z"/><path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"/><path d="M9 12v4M15 12v4"/></svg>
+              </span>
+              <span class="dash-stat-arrow">↗</span>
+            </div>
+            <div class="dash-stat-label">Today's Sales</div>
+            <div class="dash-stat-value" id="dashTodaySales">₱0.00</div>
+            <div class="dash-stat-sub" id="dashTodayOrders">0 orders today</div>
+          </div>
+
+          <div class="dash-stat-card">
+            <div class="dash-stat-top">
+              <span class="dash-stat-icon icon-rose">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 8l2-5h14l2 5"/><path d="M12 12v5M9 14v3M15 14v3"/></svg>
+              </span>
+              <span class="dash-stat-arrow">↗</span>
+            </div>
+            <div class="dash-stat-label">Total Units Sold</div>
+            <div class="dash-stat-value" id="dashUnitsSold">0</div>
+            <div class="dash-stat-sub muted">Today</div>
+          </div>
+
+          <div class="dash-stat-card">
+            <div class="dash-stat-top">
+              <span class="dash-stat-icon icon-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="14" r="3.5"/></svg>
+              </span>
+              <span class="dash-stat-arrow">↗</span>
+            </div>
+            <div class="dash-stat-label">Total Production</div>
+            <div class="dash-stat-value" id="dashProduction">0/0</div>
+            <div class="dash-stat-sub" id="dashProductionPct">0% sold</div>
+          </div>
+        </div>
+
+        <div class="dash-main-row">
+          <div class="dash-chart-card">
+            <div class="dash-card-header">
+              <div>
+                <h3>Total Revenue</h3>
+                <p>Sales Overview</p>
+              </div>
+              <div class="dash-week-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+                <span>This Week</span>
+              </div>
+            </div>
+            <div class="dash-chart" id="dashChart"></div>
+          </div>
+
+          <div class="dash-business-card">
+            <div class="dash-card-header">
+              <h3>Business Data</h3>
+              <div class="dash-week-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+                <span>This Week</span>
+              </div>
+            </div>
+            <div class="dash-biz-row biz-blue">
+              <span class="biz-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 20a4.8 4.8 0 0 1 6.5-4.2"/></svg>
+              </span>
+              <div class="biz-text">
+                <div class="biz-label">Number of Customers</div>
+                <div class="biz-value" id="dashCustomers">0</div>
+              </div>
+            </div>
+            <div class="dash-biz-row biz-peach">
+              <span class="biz-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l1 5H5l1-5z"/><path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"/></svg>
+              </span>
+              <div class="biz-text">
+                <div class="biz-label">Total Orders</div>
+                <div class="biz-value" id="dashOrders">0</div>
+              </div>
+            </div>
+            <div class="dash-biz-row biz-green">
+              <span class="biz-icon">₱</span>
+              <div class="biz-text">
+                <div class="biz-label">Average Order Value</div>
+                <div class="biz-value" id="dashAOV">₱0.00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-trending-card">
+          <div class="dash-card-header">
+            <h3>Trending Breads</h3>
+            <div class="dash-week-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+              <span>This Week</span>
+            </div>
+          </div>
+          <div id="dashTrendingList"></div>
+        </div>
+      </div>
+
+      <div class="view-placeholder" id="viewPlaceholder">
+        <div class="vp-icon" id="vpIcon">📊</div>
+        <h2 id="vpTitle">Dashboard</h2>
+        <p id="vpDesc">This section is coming soon.</p>
+      </div>
+
+      <div class="inventory-view" id="inventoryView">
+        <h2 class="ms-title">Morning Setup</h2>
+        <p class="ms-subtitle">Add new products to your system, by category</p>
+
+        <div class="ms-accordion" id="msAccordion">
+
+          <!-- BREADS -->
+          <div class="ms-accordion-item open" data-cat="bread">
+            <button class="ms-accordion-header" type="button">
+              <span class="ms-accordion-label">🍞 Breads</span>
+              <span class="ms-chevron">⌄</span>
+            </button>
+            <div class="ms-accordion-panel open">
+              <div class="ms-panel-inner">
+
+                <div class="ms-upload" id="msUpload">
+                  <input type="file" id="breadPhotoInput" accept="image/*" style="display:none;">
+                  <div class="ms-upload-inner" id="msUploadInner">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="14" r="3.5"/></svg>
+                    <span>Upload Bread Photo</span>
+                  </div>
+                </div>
+
+                <div class="ms-grid">
+                  <div class="ms-field">
+                    <label for="breadNameInput">Bread Name</label>
+                    <input type="text" id="breadNameInput" placeholder="e.g. Pandesal">
+                  </div>
+                  <div class="ms-field">
+                    <label for="breadPriceInput">Price</label>
+                    <input type="number" id="breadPriceInput" placeholder="₱0.00" min="0" step="0.01">
+                  </div>
+                  <div class="ms-field">
+                    <label for="breadPiecesInput">Pieces</label>
+                    <input type="number" id="breadPiecesInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="breadKilosInput">Kilos</label>
+                    <input type="number" id="breadKilosInput" placeholder="0" min="0" step="0.1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="breadPullOutInput">Pull Out</label>
+                    <input type="number" id="breadPullOutInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="breadLopInput">L.O.P</label>
+                    <input type="number" id="breadLopInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="breadReceivedInput">Received</label>
+                    <input type="number" id="breadReceivedInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="breadDeliveryInput">Delivery</label>
+                    <input type="number" id="breadDeliveryInput" placeholder="0" min="0" step="1">
+                  </div>
+                </div>
+
+                <p class="ms-error" id="msError" style="display:none;"></p>
+                <button class="ms-submit" id="addBreadStockBtn">+ Add Bread Stock</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- DRINKS -->
+          <div class="ms-accordion-item" data-cat="drink">
+            <button class="ms-accordion-header" type="button">
+              <span class="ms-accordion-label">🥤 Drinks</span>
+              <span class="ms-chevron">⌄</span>
+            </button>
+            <div class="ms-accordion-panel">
+              <div class="ms-panel-inner">
+
+                <div class="ms-upload" id="msUploadDrink">
+                  <input type="file" id="drinkPhotoInput" accept="image/*" style="display:none;">
+                  <div class="ms-upload-inner" id="msUploadInnerDrink">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="14" r="3.5"/></svg>
+                    <span>Upload Drink Photo</span>
+                  </div>
+                </div>
+
+                <div class="ms-grid">
+                  <div class="ms-field">
+                    <label for="drinkNameInput">Drink Name</label>
+                    <input type="text" id="drinkNameInput" placeholder="e.g. Iced Coffee">
+                  </div>
+                  <div class="ms-field">
+                    <label for="drinkPriceInput">Price</label>
+                    <input type="number" id="drinkPriceInput" placeholder="₱0.00" min="0" step="0.01">
+                  </div>
+                  <div class="ms-field">
+                    <label for="drinkPiecesInput">Pieces</label>
+                    <input type="number" id="drinkPiecesInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="drinkKilosInput">Liters</label>
+                    <input type="number" id="drinkKilosInput" placeholder="0" min="0" step="0.1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="drinkPullOutInput">Pull Out</label>
+                    <input type="number" id="drinkPullOutInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="drinkLopInput">L.O.P</label>
+                    <input type="number" id="drinkLopInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="drinkReceivedInput">Received</label>
+                    <input type="number" id="drinkReceivedInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="drinkDeliveryInput">Delivery</label>
+                    <input type="number" id="drinkDeliveryInput" placeholder="0" min="0" step="1">
+                  </div>
+                </div>
+
+                <p class="ms-error" id="msErrorDrink" style="display:none;"></p>
+                <button class="ms-submit" id="addDrinkStockBtn">+ Add Drink Stock</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ICE CREAM -->
+          <div class="ms-accordion-item" data-cat="icecream">
+            <button class="ms-accordion-header" type="button">
+              <span class="ms-accordion-label">🍦 Ice Cream</span>
+              <span class="ms-chevron">⌄</span>
+            </button>
+            <div class="ms-accordion-panel">
+              <div class="ms-panel-inner">
+
+                <div class="ms-upload" id="msUploadIcecream">
+                  <input type="file" id="icecreamPhotoInput" accept="image/*" style="display:none;">
+                  <div class="ms-upload-inner" id="msUploadInnerIcecream">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="14" r="3.5"/></svg>
+                    <span>Upload Ice Cream Photo</span>
+                  </div>
+                </div>
+
+                <div class="ms-grid">
+                  <div class="ms-field">
+                    <label for="icecreamNameInput">Flavor Name</label>
+                    <input type="text" id="icecreamNameInput" placeholder="e.g. Ube">
+                  </div>
+                  <div class="ms-field">
+                    <label for="icecreamPriceInput">Price</label>
+                    <input type="number" id="icecreamPriceInput" placeholder="₱0.00" min="0" step="0.01">
+                  </div>
+                  <div class="ms-field">
+                    <label for="icecreamPiecesInput">Pieces</label>
+                    <input type="number" id="icecreamPiecesInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="icecreamKilosInput">Liters</label>
+                    <input type="number" id="icecreamKilosInput" placeholder="0" min="0" step="0.1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="icecreamPullOutInput">Pull Out</label>
+                    <input type="number" id="icecreamPullOutInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="icecreamLopInput">L.O.P</label>
+                    <input type="number" id="icecreamLopInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="icecreamReceivedInput">Received</label>
+                    <input type="number" id="icecreamReceivedInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="icecreamDeliveryInput">Delivery</label>
+                    <input type="number" id="icecreamDeliveryInput" placeholder="0" min="0" step="1">
+                  </div>
+                </div>
+
+                <p class="ms-error" id="msErrorIcecream" style="display:none;"></p>
+                <button class="ms-submit" id="addIcecreamStockBtn">+ Add Ice Cream Stock</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CAKES -->
+          <div class="ms-accordion-item" data-cat="cake">
+            <button class="ms-accordion-header" type="button">
+              <span class="ms-accordion-label">🍰 Cakes</span>
+              <span class="ms-chevron">⌄</span>
+            </button>
+            <div class="ms-accordion-panel">
+              <div class="ms-panel-inner">
+
+                <div class="ms-upload" id="msUploadCake">
+                  <input type="file" id="cakePhotoInput" accept="image/*" style="display:none;">
+                  <div class="ms-upload-inner" id="msUploadInnerCake">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="14" r="3.5"/></svg>
+                    <span>Upload Cake Photo</span>
+                  </div>
+                </div>
+
+                <div class="ms-grid">
+                  <div class="ms-field">
+                    <label for="cakeNameInput">Cake Name</label>
+                    <input type="text" id="cakeNameInput" placeholder="e.g. Ube Cake">
+                  </div>
+                  <div class="ms-field">
+                    <label for="cakePriceInput">Price</label>
+                    <input type="number" id="cakePriceInput" placeholder="₱0.00" min="0" step="0.01">
+                  </div>
+                  <div class="ms-field">
+                    <label for="cakePiecesInput">Pieces</label>
+                    <input type="number" id="cakePiecesInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="cakeKilosInput">Kilos</label>
+                    <input type="number" id="cakeKilosInput" placeholder="0" min="0" step="0.1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="cakePullOutInput">Pull Out</label>
+                    <input type="number" id="cakePullOutInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="cakeLopInput">L.O.P</label>
+                    <input type="number" id="cakeLopInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="cakeReceivedInput">Received</label>
+                    <input type="number" id="cakeReceivedInput" placeholder="0" min="0" step="1">
+                  </div>
+                  <div class="ms-field">
+                    <label for="cakeDeliveryInput">Delivery</label>
+                    <input type="number" id="cakeDeliveryInput" placeholder="0" min="0" step="1">
+                  </div>
+                </div>
+
+                <p class="ms-error" id="msErrorCake" style="display:none;"></p>
+                <button class="ms-submit" id="addCakeStockBtn">+ Add Cake Stock</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ADD STOCK / ALL PRODUCTS -->
+          <div class="ms-accordion-item" data-cat="stock">
+            <button class="ms-accordion-header" type="button">
+              <span class="ms-accordion-label">📦 Add Stock</span>
+              <span class="ms-chevron">⌄</span>
+            </button>
+            <div class="ms-accordion-panel">
+              <div class="ms-panel-inner">
+                <p class="stock-intro">Every product you've added, grouped by category. Tap any item to top up its stock or edit its details.</p>
+                <div class="stock-search-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+                  <input id="stockSearchInput" type="text" placeholder="Search product or category">
+                </div>
+                <div id="stockList"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="reports-view" id="reportsView">
+        <div class="reports-header">
+          <div>
+            <h2 class="rp-title">Daily Bakery Report</h2>
+            <p class="rp-subtitle">All bread inventory and sales summary</p>
+          </div>
+          <button class="rp-download-btn" id="downloadReportBtn">Download Report</button>
+        </div>
+
+        <div class="reports-table-wrap">
+          <table class="reports-table">
+            <thead>
+              <tr>
+                <th>Bread</th>
+                <th>Kilos</th>
+                <th>Price</th>
+                <th>Pieces</th>
+                <th>L.O.P</th>
+                <th>Received</th>
+                <th>Delivery</th>
+                <th>Pull Out</th>
+                <th>L.O.T</th>
+                <th>Sold</th>
+                <th>Sold Amount</th>
+              </tr>
+            </thead>
+            <tbody id="reportsTableBody"></tbody>
+            <tfoot>
+              <tr class="reports-total-row">
+                <td colspan="10">TOTAL SALES</td>
+                <td id="reportsTotalCell">₱0</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div class="history-view" id="historyView">
+        <div class="history-search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input id="historySearchInput" type="text" placeholder="Search bread...">
+        </div>
+
+        <div class="history-card">
+          <h2 class="hist-title">Customer Purchase History</h2>
+          <div id="historyGroups"></div>
+        </div>
+      </div>
+
+      <div class="settings-view" id="settingsView">
+        <div class="settings-layout">
+          <div class="settings-nav">
+            <button class="settings-nav-item active" data-setting="theme">Theme Mode</button>
+            <button class="settings-nav-item" data-setting="stock">Low Stock Alert</button>
+            <button class="settings-nav-item" data-setting="store">Store Info</button>
+            <button class="settings-nav-item" data-setting="data">Data Management</button>
+          </div>
+
+          <div class="settings-detail">
+            <!-- Theme Mode -->
+            <div class="settings-panel" id="settingsPanel-theme">
+              <h3>Theme Mode</h3>
+              <p class="settings-desc">Choose how the app looks on this device.</p>
+              <div class="theme-toggle-row">
+                <button class="theme-option active" id="themeOptionLight" data-theme-choice="light">
+                  <span class="theme-option-icon">☀️</span>
+                  <span>Light</span>
+                </button>
+                <button class="theme-option" id="themeOptionDark" data-theme-choice="dark">
+                  <span class="theme-option-icon">🌙</span>
+                  <span>Dark</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Low Stock Alert -->
+            <div class="settings-panel" id="settingsPanel-stock" style="display:none;">
+              <h3>Low Stock Alert</h3>
+              <p class="settings-desc">Set bread stock thresholds (based on L.O.T, today's remaining stock). You'll get a warning as soon as a sale brings any bread to or below these levels.</p>
+
+              <div class="stock-alert-field">
+                <div class="stock-alert-field-label">
+                  <span class="stock-alert-dot low"></span>
+                  <label for="lowStockInput">Low Stock Alert (pieces remaining)</label>
+                </div>
+                <input type="number" id="lowStockInput" min="0" step="1" value="10">
+              </div>
+
+              <div class="stock-alert-field">
+                <div class="stock-alert-field-label">
+                  <span class="stock-alert-dot critical"></span>
+                  <label for="criticalStockInput">Critical Stock Alert (pieces remaining)</label>
+                </div>
+                <input type="number" id="criticalStockInput" min="0" step="1" value="3">
+              </div>
+
+              <p class="settings-error" id="stockAlertError" style="display:none;"></p>
+              <button class="settings-save-btn" id="saveStockAlertBtn">Save Alert Settings</button>
+              <p class="settings-saved-msg" id="stockAlertSavedMsg" style="display:none;">Saved.</p>
+            </div>
+
+            <!-- Store Info -->
+            <div class="settings-panel" id="settingsPanel-store" style="display:none;">
+              <h3>Store Info</h3>
+              <p class="settings-desc">Shown on your printed and on-screen receipts.</p>
+              <div class="store-info-field">
+                <label for="storeNameInput">Bakery Name</label>
+                <input type="text" id="storeNameInput" value="The Corner Bakery">
+              </div>
+              <div class="store-info-field">
+                <label for="storeCashierInput">Cashier Display Name</label>
+                <input type="text" id="storeCashierInput" value="Chef">
+              </div>
+              <button class="settings-save-btn" id="saveStoreInfoBtn">Save Store Info</button>
+              <p class="settings-saved-msg" id="storeInfoSavedMsg" style="display:none;">Saved.</p>
+            </div>
+
+            <!-- Data Management -->
+            <div class="settings-panel" id="settingsPanel-data" style="display:none;">
+              <h3>Data Management</h3>
+              <p class="settings-desc">Clear everything and start fresh — products, sales history, and reports.</p>
+              <button class="settings-danger-btn" id="resetDataBtn">Reset All Data</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STOCK ALERT MODAL -->
+  <div class="stock-alert-overlay" id="stockAlertOverlay">
+    <div class="stock-alert-modal">
+      <h3 id="stockAlertTitle">Stock Alert</h3>
+      <div id="stockAlertBody"></div>
+      <button class="stock-alert-ok-btn" id="stockAlertOkBtn">OK</button>
+    </div>
+  </div>
+
+  <!-- RESET CONFIRM MODAL -->
+  <div class="stock-alert-overlay" id="resetConfirmOverlay">
+    <div class="stock-alert-modal">
+      <h3>Reset all data?</h3>
+      <div><p style="margin:0;color:var(--muted);font-size:13.5px;">This clears every product, sale, and history entry. This can't be undone.</p></div>
+      <div style="display:flex;gap:10px;margin-top:18px;">
+        <button class="settings-save-btn" id="resetConfirmCancelBtn" style="background:var(--line-strong);color:var(--ink);">Cancel</button>
+        <button class="stock-alert-ok-btn" id="resetConfirmOkBtn" style="background:var(--danger);margin-top:0;">Yes, Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER PANEL -->
+  <div class="order-panel-backdrop" id="orderPanelBackdrop"></div>
+  <aside class="order-panel" id="orderPanel">
+    <div class="receipt-title brand-font">
+      <h2>The Corner Bakery</h2>
+      <p id="receiptDate"></p>
+    </div>
+    <div class="order-header">
+      <h2>Current Order</h2>
+      <button class="order-panel-close" id="orderPanelClose" title="Close" aria-label="Close order panel">✕</button>
+    </div>
+    <div class="order-list" id="orderList"></div>
+    <div class="order-summary">
+      <div class="summary-row"><span>Subtotal</span><span id="sumSubtotal">₱0.00</span></div>
+      <div class="summary-row discount-row">
+        <span>Discount (₱)</span>
+        <input id="discountInput" type="number" min="0" step="1" value="0">
+      </div>
+      <div class="summary-total"><span>Total</span><span id="sumTotal">₱0.00</span></div>
+      <button class="print-btn" id="recordSaleBtn" disabled>Record Sale</button>
+      <button class="clear-link" id="clearOrderBtn">Clear order</button>
+    </div>
+  </aside>
+
+  <!-- TOAST -->
+  <div class="toast" id="toastEl"></div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
